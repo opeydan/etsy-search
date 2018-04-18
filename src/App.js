@@ -1,0 +1,98 @@
+import React, { Component } from 'react';
+import SearchBar from "./components/SearchBar";
+import SearchResults from "./components/SearchResults";
+import './App.css';
+
+class App extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      results: [],
+      isLoading: false,  // TODO implement the visual loading indicator
+      terms:[],
+      totalElemets: 1,
+      totalPages:1,
+      currentPage: 1
+    };
+
+    this.getApi = this.getApi.bind(this);
+  }
+
+  //API request as promise with search parameters and page number. Items per page hardcoded
+
+  getApi(){
+
+    this.setState({ isLoading: true });
+
+    let api_key = "2783xml06xku4n47xxr9paqz";
+    let terms = this.state.terms;
+    let page = this.state.currentPage;
+    let api = `https://openapi.etsy.com/v2/listings/active?keywords=${terms}&limit=12&page=${page}&includes=Images:1&api_key=${api_key}`
+  
+    fetch(api)
+        .then((response) => {
+          if(!response.ok) throw new Error("Not OK", response.status);
+          else return response.json();
+        })
+        .then((data) => {
+          this.setState({ 
+            isLoading: false, 
+            results: data.results,
+            totalElemets: data.count,
+            totalPages: Math.ceil(data.count / 12),
+          });
+          console.log("DATA CAME");
+        })
+        .catch((error) => {
+          console.log("error catched: " + error);
+        });
+  }
+
+  // calling the API once the terms are received from the child compponent SearchBar
+  getSearch = s => {
+     
+      const {terms} = this.state;
+      terms.push(s);
+      this.setState({
+        terms:terms
+      });
+      this.getApi()
+    }
+
+  // Pagination controls  
+  previousPage = () => {
+    if (this.state.currentPage !== 1) {
+      this.setState((prevState) => ({currentPage: (prevState.currentPage - 1)}))
+      this.getApi()
+    }
+  }
+
+  nextPage = () => {
+    if (this.state.currentPage + 1 < this.state.totalPages) {
+      this.setState((prevState) => ({currentPage: (prevState.currentPage + 1)}))
+      this.getApi()
+    }
+  }
+
+
+  render() {
+
+    return (
+      <div className="App">
+        <h2> The Etsy Search </h2>
+        <SearchBar search={this.search} sendSearchToParent={this.getSearch}/>
+        <SearchResults results={this.state.results}/>
+        
+        { this.state.totalPages > 1 ? ( <div className="pagination">
+                                          <button onClick={this.previousPage}>Previous Page</button>
+                                          <button onClick={this.nextPage}>Next Page</button>
+                                          <p className="totalEl">{this.state.totalElemets} Results</p>
+                                        </div> ) : <p/> }
+      </div>
+    );
+  }
+}
+
+export default App;

@@ -1,0 +1,48 @@
+.App {
+  padding: 10px;
+}
+
+h2 {
+  text-align: center;
+}
+
+.SearchBar {
+  text-align: center;
+}
+
+.SearchResults {
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  align-content: flex-start;
+}
+.ResultEl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: center;
+    width: 200px;
+    font-weight: bold;
+}
+
+.elTitle {
+  align-self: stretch;
+  padding-left:17px;
+  margin-bottom: 0;
+}
+
+.pagination {
+  text-align: center;
+  display:block;
+  overflow:hidden;
+  margin: 0 auto;
+}
+.totalEl {
+  font-size:smaller;
+  padding-top:5px;
+}
+
+
