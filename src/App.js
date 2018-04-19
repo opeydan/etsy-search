@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/SearchResults";
+import Paginator from "./components/Paginator";
 import './App.css';
 
 class App extends Component {
@@ -63,17 +64,15 @@ class App extends Component {
 
   // Pagination controls  
   previousPage = () => {
-    if (this.state.currentPage !== 1) {
-      this.setState((prevState) => ({currentPage: (prevState.currentPage - 1)}))
-      this.getApi()
-    }
+      this.setState((prevState) => ({currentPage: (prevState.currentPage - 1)}), () => {
+          this.getApi()
+      });
   }
 
   nextPage = () => {
-    if (this.state.currentPage + 1 < this.state.totalPages) {
-      this.setState((prevState) => ({currentPage: (prevState.currentPage + 1)}))
-      this.getApi()
-    }
+      this.setState((prevState) => ({currentPage: (prevState.currentPage + 1)}), () => {
+          this.getApi()
+      });
   }
 
 
@@ -85,11 +84,10 @@ class App extends Component {
         <SearchBar search={this.search} sendSearchToParent={this.getSearch}/>
         <SearchResults results={this.state.results}/>
         
-        { this.state.totalPages > 1 ? ( <div className="pagination">
-                                          <button onClick={this.previousPage}>Previous Page</button>
-                                          <button onClick={this.nextPage}>Next Page</button>
-                                          <p className="totalEl">{this.state.totalElemets} Results</p>
-                                        </div> ) : <p/> }
+        { this.state.totalPages > 1 ? ( <Paginator  all={this.state.totalElemets} 
+                                                    sendPrev={this.previousPage} 
+                                                    sendNext={this.nextPage}
+                                                    curPage={this.state.currentPage} /> ) : <p/> }
       </div>
     );
   }
