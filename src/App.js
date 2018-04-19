@@ -15,13 +15,14 @@ class App extends Component {
       terms:[],
       totalElemets: 1,
       totalPages:1,
-      currentPage: 1
+      currentPage: 1,
+      favList: []
     };
 
     this.getApi = this.getApi.bind(this);
   }
 
-  //API request as promise with search parameters and page number. Items per page hardcoded
+  //API request as promise with search parameters and page number
 
   getApi(){
 
@@ -30,7 +31,7 @@ class App extends Component {
     let api_key = "2783xml06xku4n47xxr9paqz";
     let terms = this.state.terms;
     let page = this.state.currentPage;
-    let api = `https://openapi.etsy.com/v2/listings/active?keywords=${terms}&limit=12&page=${page}&includes=Images:1&api_key=${api_key}`
+    let api = `https://openapi.etsy.com/v2/listings/active?keywords=${terms}&page=${page}&includes=Images:1&api_key=${api_key}`
   
     fetch(api)
         .then((response) => {
@@ -43,8 +44,9 @@ class App extends Component {
             results: data.results,
             totalElemets: data.count,
             totalPages: Math.ceil(data.count / 12),
+            favList: []
           });
-          console.log("DATA CAME");
+          console.log("DATA CAME", api);
         })
         .catch((error) => {
           console.log("error catched: " + error);
@@ -61,6 +63,13 @@ class App extends Component {
       });
       this.getApi()
     }
+
+  // passes the list of bookmarked items' ids  
+  saveFavList = el => {
+      this.setState({
+        favList:el
+      });
+  }
 
   // Pagination controls  
   previousPage = () => {
@@ -82,12 +91,16 @@ class App extends Component {
       <div className="App">
         <h2> The Etsy Search </h2>
         <SearchBar search={this.search} sendSearchToParent={this.getSearch}/>
-        <SearchResults results={this.state.results}/>
+        <SearchResults 
+            results={this.state.results} 
+            favList={this.state.favList} 
+            sendFavListToParent={this.saveFavList}/>
         
-        { this.state.totalPages > 1 ? ( <Paginator  all={this.state.totalElemets} 
-                                                    sendPrev={this.previousPage} 
-                                                    sendNext={this.nextPage}
-                                                    curPage={this.state.currentPage} /> ) : <p/> }
+        { this.state.totalPages > 1 ? ( <Paginator  
+                                          all={this.state.totalElemets} 
+                                          sendPrev={this.previousPage} 
+                                          sendNext={this.nextPage}
+                                          curPage={this.state.currentPage} /> ) : null }
       </div>
     );
   }

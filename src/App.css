@@ -26,6 +26,7 @@ h2 {
     align-self: center;
     width: 200px;
     font-weight: bold;
+    position:relative;
 }
 
 .elTitle {
@@ -44,5 +45,25 @@ h2 {
   font-size:smaller;
   padding-top:5px;
 }
+.fav {
+  position: absolute;
+  right: 30px;
+  top: 10px;
+  font-weight: bold;
+  font-size: 20px;
+  color: #EC644B;
+  filter: drop-shadow(1px 1px 4px #4444dd);
+  cursor: pointer;
+  padding: 0 3px;
+  display: none;
+  border:1px solid #EC644B;
+  border-radius: 50%;
+}
 
+.prodPic:hover .fav, .shown {
+  display:block;
+}
 
+.hidden {
+  display: none;
+}
